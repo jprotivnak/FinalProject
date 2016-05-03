@@ -9,6 +9,7 @@ import javax.swing.border.EtchedBorder;
  *
  */
 public class Main extends JFrame {
+	public static final long serialVersionUID = 1;
 	
 	
 	
