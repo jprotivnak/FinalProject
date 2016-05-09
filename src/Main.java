@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import javax.swing.border.EtchedBorder;
  */
 public class Main extends JFrame implements ActionListener, Serializable {
 	public static final long serialVersionUID = 1;
-	private JMenu TVTech;
+	private JMenu TVTuner;
 	private JMenu file;
 	private JMenu view;
 	private JMenu subMenu;
@@ -20,45 +21,59 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private JMenuItem menuItem;
 	private JTextField shows;
 	private JPanel options;
+	private JList list;
+	private ArrayList<TVShows> tvShows = new ArrayList<TVShows>();
 	private Font f1 = new Font("Dialog", Font.BOLD,14);
 
 	public Main() {
 		super();
-		this.setLayout(new BorderLayout());
+		this.setLayout(new GridLayout(2,2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		menuBar = new JMenuBar();
 		shows = new JTextField();
 		this.add(shows, BorderLayout.EAST);
 		//this.add(options, BorderLayout.WEST);
+		
+		list = new JList(tvShows);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		list.setVisibleRowCount(-1);
+		...
+		JScrollPane listScroller = new JScrollPane(list);
+		listScroller.setPreferredSize(new Dimension(250, 80));
+		
+		options = new JPanel();
+		options.setLayout(new GridLayout(6, 2));
+		options.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), "Options"));
 
-		TVTech = new JMenu("Tv Tech");
+		TVTuner = new JMenu("Tv Tuner");
 		
 		menuItem = new JMenuItem("Preferences");
 		menuItem.setActionCommand("preferences");
 		menuItem.addActionListener(this);
 
-		TVTech.add(menuItem);
+		TVTuner.add(menuItem);
 
 		menuItem = new JMenuItem("About");
 		menuItem.setActionCommand("about");
 		menuItem.addActionListener(this);
 		
-		TVTech.add(menuItem);
+		TVTuner.add(menuItem);
 		
-		TVTech.addSeparator();
+		TVTuner.addSeparator();
 		
 		menuItem = new JMenuItem("Quit");
 		menuItem.setActionCommand("quit");
 		menuItem.addActionListener(this);
 		
-		TVTech.add(menuItem);
+		TVTuner.add(menuItem);
 		
-		TVTech.setFont(f1);
+		TVTuner.setFont(f1);
 
-		TVTech.add(menuItem);
+		TVTuner.add(menuItem);
 
-		menuBar.add(TVTech);
+		menuBar.add(TVTuner);
 
 		file = new JMenu("File");
 		menuItem = new JMenuItem("New");
@@ -97,6 +112,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		// subMenu = new JMenu("");
 
 		this.setJMenuBar(menuBar);
+		this.add(options);
 
 		this.setResizable(true);
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -106,6 +122,18 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()) {
+		case "preferences":
+			break;
+		case "about":
+			break;
+		case "quit":
+			break;
+		case "new":
+			break;
+		case "open":
+			break;
+		case "save":
+			break;
 		
 		}
 
