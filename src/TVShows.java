@@ -2,6 +2,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public interface TVShows {
+	
+	/**
+	 * Accepts type String to set as the name
+	 * of each TV Show.
+	 * @param s
+	 */
+	public void name(String s);
 
 	/**
 	 * Accepts type BufferedImage to set as the
@@ -24,7 +31,7 @@ public interface TVShows {
 	 */
 	public void description(String s);
 	
-	public void 
+//	public void 
 	
 	
 	

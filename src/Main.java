@@ -22,29 +22,36 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private JTextField shows;
 	private JPanel options;
 	private JList list;
-	private ArrayList<TVShows> tvShows = new ArrayList<TVShows>();
+	private TVShows[] TvShows;
 	private Font f1 = new Font("Dialog", Font.BOLD,14);
+//	private Jsoup soup;
 
 	public Main() {
+		
+		
+//		jsoup
+		
+		
+		
+		
 		super();
 		this.setLayout(new GridLayout(2,2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		TvShows = new TVShows[5];
 
 		menuBar = new JMenuBar();
-		shows = new JTextField();
-		this.add(shows, BorderLayout.EAST);
-		//this.add(options, BorderLayout.WEST);
 		
-		list = new JList(tvShows);
+		list = new JList(TvShows);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		list.setLayoutOrientation(JList.VERTICAL);
 		list.setVisibleRowCount(-1);
-		...
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
+		this.add(listScroller, BorderLayout.NORTH);
+		
 		options = new JPanel();
-		options.setLayout(new GridLayout(6, 2));
+		options.setLayout(new GridLayout(1, 2));
 		options.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), "Options"));
 
 		TVTuner = new JMenu("Tv Tuner");
@@ -102,6 +109,12 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		menuItem = new JMenuItem("Maximize Window");
 		menuItem.setActionCommand("fScreen");
 		menuItem.addActionListener(this);
+		
+		view.add(menuItem);
+		
+		menuItem = new JMenuItem("Shrink Window");
+		menuItem.setActionCommand("sWindow");
+		menuItem.addActionListener(this);
 
 		view.add(menuItem);
 
@@ -115,7 +128,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		this.add(options);
 
 		this.setResizable(true);
-		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		this.getPreferredSize();
 		this.pack();
 		this.setVisible(true);
 	}
@@ -133,6 +146,12 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "open":
 			break;
 		case "save":
+			break;
+		case "fScreen":
+			this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+			break;
+		case "sWindow":
+			this.setSize(this.getPreferredSize());
 			break;
 		
 		}
