@@ -21,31 +21,26 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private JMenuItem menuItem;
 	private JTextField shows;
 	private JPanel options;
+	private JButton button;
 	private JList list;
-	private TVShows[] TvShows;
+	private JScrollPane listScroller;
+	private Object[] showCount;
 	private Font f1 = new Font("Dialog", Font.BOLD,14);
-//	private Jsoup soup;
 
 	public Main() {
-		
-		
-//		jsoup
-		
-		
-		
-		
 		super();
 		this.setLayout(new GridLayout(2,2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		TvShows = new TVShows[5];
+		showCount = new Show[1];
 
 		menuBar = new JMenuBar();
 		
-		list = new JList(TvShows);
+		list = new JList(showCount);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.setVisibleRowCount(-1);
-		JScrollPane listScroller = new JScrollPane(list);
+		
+		listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
 		this.add(listScroller, BorderLayout.NORTH);
@@ -64,6 +59,12 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 		menuItem = new JMenuItem("About");
 		menuItem.setActionCommand("about");
+		menuItem.addActionListener(this);
+		
+		TVTuner.add(menuItem);
+		
+		menuItem = new JMenuItem("License");
+		menuItem.setActionCommand("license");
 		menuItem.addActionListener(this);
 		
 		TVTuner.add(menuItem);
@@ -121,6 +122,34 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		view.setFont(f1);
 
 		menuBar.add(view);
+		
+		button = new JButton("Add Show");
+		button.setActionCommand("add");
+		button.addActionListener(this);
+		
+		options.add(button);
+		
+		button = new JButton("Remove Show");
+		button.setActionCommand("remove");
+		button.addActionListener(this);
+		
+		options.add(button);
+		
+		button = new JButton("Info");
+		button.setActionCommand("info");
+		button.addActionListener(this);
+		
+		options.add(button);
+		
+		button = new JButton("Edit Show");
+		button.setActionCommand("edit");
+		button.addActionListener(this);
+		
+		options.add(button);
+		
+		
+		
+		
 
 		// subMenu = new JMenu("");
 
@@ -135,29 +164,63 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()) {
-		case "preferences":
-			break;
-		case "about":
-			break;
-		case "quit":
-			break;
-		case "new":
-			break;
-		case "open":
-			break;
-		case "save":
-			break;
-		case "fScreen":
-			this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-			break;
-		case "sWindow":
-			this.setSize(this.getPreferredSize());
-			break;
+			case "add":
+				addShow();
+				break;
+			case "remove":
+				break;
+			case "info":
+				break;
+			case "edit":
+				break;
+			case "preferences":
+				break;
+			case "about":
+				JOptionPane.showMessageDialog(null, "TVTUNER\u2122\nCopyright \u00A92016 Pro Inc. All Rights Reserved \u00AE. License Agreement");
+				break;
+			case "license":
+            	JOptionPane.showMessageDialog(null, "Copyright (\u00A9) 2016, 1998 Pro Inc.\n800 Montana Ave., Natrona Heights, PA  15065, USA\nEveryone is permitted to copy and distribute verbatim copies\nof this license document, but changing it is not allowed.");
+            	break;
+			case "quit":
+				System.exit(-1);
+				break;
+			case "new":
+				break;
+			case "open":
+				break;
+			case "save":
+				break;
+			case "fScreen":
+				this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+				break;
+			case "sWindow":
+				this.setSize(this.getPreferredSize());
+				break;
 		
 		}
 
 	}
-
+	
+	public void addShow() {
+		Show newShow = new Show();
+		newShow.name = JOptionPane.showInputDialog("Please enter the name of your show");
+		reCount();
+		((Show) showCount[showCount.length - 1]).add(newShow);
+		System.out.println(showCount.length);
+		this.validate();
+		this.repaint();
+	}
+	
+	public void reCount(){
+		Show[] temp = new Show[showCount.length + 2];
+		for(int i = 0; i < showCount.length; i++) {
+			temp[i] = (Show) showCount[i];
+		}
+		showCount = new Show[temp.length];
+		showCount = temp;
+	}
+		
+		
 	/**
 	 * @param args
 	 */

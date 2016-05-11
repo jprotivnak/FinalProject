@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public interface TVShows {
+public  interface TVShows {
 	
 	/**
 	 * Accepts type String to set as the name
