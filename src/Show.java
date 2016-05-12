@@ -11,6 +11,10 @@ public class Show implements TVShows {
 	public void name(String s) {
 		name = s;
 	}
+	
+	public String getName() {
+		return name;
+	}
 
 	public void image(BufferedImage i) {
 		image = i;
