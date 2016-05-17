@@ -2,8 +2,11 @@ import javax.swing.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.Serializable;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.border.EtchedBorder;
 
@@ -28,6 +31,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private Object[] showCount;
 	private int[] seasonNumber = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 	private Font f1 = new Font("Dialog", Font.BOLD, 14);
+	private File img = new File("imagen.png");
 
 	public Main() {
 		super();
@@ -197,77 +201,86 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "sWindow":
 			this.setSize(this.getPreferredSize());
 			break;
-
+		case "combo":			      
+			break;
+		case "picButton":
+			JFileChooser file = new JFileChooser();
+			file.setCurrentDirectory(new File("Drawings"));
+			int open = file.showOpenDialog(this);
+			if (open == JFileChooser.APPROVE_OPTION) {
+				img = file.getSelectedFile();
+			}
+			break;
 		}
 
 	}
 
 	public void addShow() {
 		Show newShow = new Show();
-		newShow.name = JOptionPane.showInputDialog("Please enter the name of your show");
-		showList.add(newShow);
-		showCount = new Show[showList.size()];
-		showCount = showList.toArray(showCount);
-		for(int i = 0; i < showCount.length; i++) {
-			System.out.println(((Show) showCount[i]).getName());
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		JTextField name = new JTextField();
 		JTextField description = new JTextField();
+		JButton button = new JButton("Set Image");
+		button.setActionCommand("picButton");
+		button.addActionListener(this);
+		button.setSize(50, 10);
+//		BufferedImage img = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
+//		img.
+		
+		
+		
+		
+		
+		
+		BufferedImage in = ImageIO.read(img);
+
+		BufferedImage newImage = new BufferedImage(
+		    in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g = newImage.createGraphics();
+		g.drawImage(in, 0, 0, null);
+		g.dispose();
+		
+		
+		
+		
+		
+		JLabel tempLabel = new JLabel(new ImageIcon(img));
 		JComboBox c = new JComboBox();
-		Object[] message = {"Name:", name, "Description:", description, "Number of Seasons:", c};
+		for(int i = 0; i < seasonNumber.length; i++) {
+			c.addItem(seasonNumber[i]);
+		}
+		
+		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:", img, button};
 		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION);
 		if (option == JOptionPane.OK_OPTION) {
-		    for (int i = 0; i < seasonNumber.length; i++)
-		      c.addItem(seasonNumber[i]);
-		    c.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        t.setText("index: " + c.getSelectedIndex() + "   "
-		            + ((JComboBox) e.getSource()).getSelectedItem());
-		      }
-		    });
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		http://www.java2s.com/Code/Java/Swing-JFC/Usingdropdownlists.htm
-		
-		
+			newShow.setName(name.getText());
+			newShow.setDescription(description.getText());
+			newShow.setSeasons(c.getSelectedIndex() + 1);
+			//newShow.setImage(button.get);
+			for (int i = 0; i < seasonNumber.length; i++) {
+				
+			}
+			c.addActionListener(this);
+			c.setActionCommand("combo");
+		}
+
+		// http://www.java2s.com/Code/Java/Swing-JFC/Usingdropdownlists.htm
+//
 //		JTextField username = new JTextField();
 //		JTextField password = new JPasswordField();
-//		Object[] message = {
-//		    "Username:", username,
-//		    "Password:", password
-//		};
+//		Object[] message = { "Username:", username, "Password:", password };
 //
 //		int option = JOptionPane.showConfirmDialog(null, message, "Login", JOptionPane.OK_CANCEL_OPTION);
 //		if (option == JOptionPane.OK_OPTION) {
-//		    if (username.getText().equals("h") && password.getText().equals("h")) {
-//		        System.out.println("Login successful");
-//		    } else {
-//		        System.out.println("login failed");
-//		    }
+//			if (username.getText().equals("h") && password.getText().equals("h")) {
+//				System.out.println("Login successful");
+//			} else {
+//				System.out.println("login failed");
+//			}
 //		} else {
-//		    System.out.println("Login canceled");
+//			System.out.println("Login canceled");
 //		}
-		
-		
-		
-		
+
 	}
 
 	/**

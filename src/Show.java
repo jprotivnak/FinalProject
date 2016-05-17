@@ -8,7 +8,7 @@ public class Show implements TVShows {
 	public Show() {
 	}
 
-	public void name(String s) {
+	public void setName(String s) {
 		name = s;
 	}
 	
@@ -16,16 +16,28 @@ public class Show implements TVShows {
 		return name;
 	}
 
-	public void image(BufferedImage i) {
+	public void setImage(BufferedImage i) {
 		image = i;
 	}
 	
-	public void seasons(int i) {
+	public BufferedImage getImage() {
+		return image;
+	}
+	
+	public void setSeasons(int i) {
 		seasons = i;
 	}
 	
-	public void description(String s) {
+	public int getSeasons() {
+		return seasons;
+	}
+	
+	public void setDescription(String s) {
 		description = s;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 
 }
