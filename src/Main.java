@@ -28,15 +28,22 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private JList list;
 	private JScrollPane listScroller;
 	private ArrayList<Show> showList = new ArrayList<Show>();
+	private Show[] tempArray;
 	private Object[] showCount;
 	private int[] seasonNumber = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 	private Font f1 = new Font("Dialog", Font.BOLD, 14);
 	private File img = new File("imagen.png");
-
+	private Graphics2D g;
+	private BufferedImage in;
+	private BufferedImage newImage;
+	private Icon icon;
+	JComboBox c;
+	
 	public Main() {
 		super();
 		this.setLayout(new GridLayout(2, 2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		icon = new ImageIcon("tv.png");
 		showCount = new Show[2];
 
 		menuBar = new JMenuBar();
@@ -57,12 +64,6 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), "Options"));
 
 		TVTuner = new JMenu("Tv Tuner");
-
-		menuItem = new JMenuItem("Preferences");
-		menuItem.setActionCommand("preferences");
-		menuItem.addActionListener(this);
-
-		TVTuner.add(menuItem);
 
 		menuItem = new JMenuItem("About");
 		menuItem.setActionCommand("about");
@@ -176,8 +177,6 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			break;
 		case "edit":
 			break;
-		case "preferences":
-			break;
 		case "about":
 			JOptionPane.showMessageDialog(null,
 					"TVTUNER\u2122\nCopyright \u00A92016 Pro Inc. All Rights Reserved \u00AE. License Agreement");
@@ -201,14 +200,20 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "sWindow":
 			this.setSize(this.getPreferredSize());
 			break;
-		case "combo":			      
+		case "combo":
 			break;
 		case "picButton":
-			JFileChooser file = new JFileChooser();
-			file.setCurrentDirectory(new File("Drawings"));
-			int open = file.showOpenDialog(this);
-			if (open == JFileChooser.APPROVE_OPTION) {
-				img = file.getSelectedFile();
+			try {
+				JFileChooser file = new JFileChooser();
+				file.setCurrentDirectory(new File("FinalProject"));
+				int open = file.showOpenDialog(this);
+				if (open == JFileChooser.APPROVE_OPTION) {
+					img = file.getSelectedFile();
+					in = ImageIO.read(img);
+					newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				}
+			} catch (Exception es) {
+				es.printStackTrace();
 			}
 			break;
 		}
@@ -223,63 +228,33 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		button.setActionCommand("picButton");
 		button.addActionListener(this);
 		button.setSize(50, 10);
-//		BufferedImage img = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
-//		img.
+		c = new JComboBox();
 		
-		
-		
-		
-		
-		
-		BufferedImage in = ImageIO.read(img);
-
-		BufferedImage newImage = new BufferedImage(
-		    in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-		Graphics2D g = newImage.createGraphics();
-		g.drawImage(in, 0, 0, null);
-		g.dispose();
-		
-		
-		
-		
-		
-		JLabel tempLabel = new JLabel(new ImageIcon(img));
-		JComboBox c = new JComboBox();
-		for(int i = 0; i < seasonNumber.length; i++) {
+		for (int i = 0; i < seasonNumber.length; i++) {
 			c.addItem(seasonNumber[i]);
 		}
-		
-		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:", img, button};
-		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION);
+
+		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:", button };
+		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION, JOptionPane.OK_CANCEL_OPTION, icon);
 		if (option == JOptionPane.OK_OPTION) {
 			newShow.setName(name.getText());
 			newShow.setDescription(description.getText());
 			newShow.setSeasons(c.getSelectedIndex() + 1);
-			//newShow.setImage(button.get);
-			for (int i = 0; i < seasonNumber.length; i++) {
-				
-			}
+			newShow.setImage(newImage);
 			c.addActionListener(this);
 			c.setActionCommand("combo");
+			showList.add(newShow);
 		}
+		
+		showCount = new Show[showList.size()];
+		showCount = showList.toArray();
+		
+		System.out.println((Show) showLis);
+		
+		repaint();
+		
 
 		// http://www.java2s.com/Code/Java/Swing-JFC/Usingdropdownlists.htm
-//
-//		JTextField username = new JTextField();
-//		JTextField password = new JPasswordField();
-//		Object[] message = { "Username:", username, "Password:", password };
-//
-//		int option = JOptionPane.showConfirmDialog(null, message, "Login", JOptionPane.OK_CANCEL_OPTION);
-//		if (option == JOptionPane.OK_OPTION) {
-//			if (username.getText().equals("h") && password.getText().equals("h")) {
-//				System.out.println("Login successful");
-//			} else {
-//				System.out.println("login failed");
-//			}
-//		} else {
-//			System.out.println("Login canceled");
-//		}
 
 	}
 
