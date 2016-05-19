@@ -38,7 +38,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private BufferedImage newImage;
 	private Icon icon;
 	JComboBox c;
-	
+
 	public Main() {
 		super();
 		this.setLayout(new GridLayout(2, 2));
@@ -193,6 +193,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "open":
 			break;
 		case "save":
+			saveFile();
 			break;
 		case "fScreen":
 			this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -229,13 +230,15 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		button.addActionListener(this);
 		button.setSize(50, 10);
 		c = new JComboBox();
-		
+
 		for (int i = 0; i < seasonNumber.length; i++) {
 			c.addItem(seasonNumber[i]);
 		}
 
-		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:", button };
-		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION, JOptionPane.OK_CANCEL_OPTION, icon);
+		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:",
+				button };
+		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.OK_CANCEL_OPTION, icon);
 		if (option == JOptionPane.OK_OPTION) {
 			newShow.setName(name.getText());
 			newShow.setDescription(description.getText());
@@ -244,18 +247,26 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			c.addActionListener(this);
 			c.setActionCommand("combo");
 			showList.add(newShow);
+			showCount = new Show[showList.size()];
+			showCount = showList.toArray();
 		}
-		
-		showCount = new Show[showList.size()];
-		showCount = showList.toArray();
-		
-		System.out.println((Show) showLis);
-		
-		repaint();
-		
+
+		listScroller.repaint();
 
 		// http://www.java2s.com/Code/Java/Swing-JFC/Usingdropdownlists.htm
 
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponents(g);
+		for (int i = 0; i < showList.size(); i++) {
+			
+		}
+
+	}
+	
+	public void saveFile() {
+		
 	}
 
 	/**
