@@ -4,6 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.imageio.ImageIO;
@@ -37,7 +41,13 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private BufferedImage in;
 	private BufferedImage newImage;
 	private Icon icon;
-	JComboBox c;
+	private JComboBox c;
+	private JFileChooser chooser;
+	private FileOutputStream outStream;
+	private ObjectOutputStream outFile;
+	private FileInputStream inStream;
+	private ObjectInputStream inFile;
+	private String tempString;
 
 	public Main() {
 		super();
@@ -172,8 +182,10 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			addShow();
 			break;
 		case "remove":
+			removeShow();
 			break;
 		case "info":
+			getInfo();
 			break;
 		case "edit":
 			break;
@@ -191,6 +203,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "new":
 			break;
 		case "open":
+			openFile();
 			break;
 		case "save":
 			saveFile();
@@ -206,12 +219,10 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "picButton":
 			try {
 				JFileChooser file = new JFileChooser();
-				file.setCurrentDirectory(new File("FinalProject"));
+				file.setCurrentDirectory(new File("Saved Show Pictures"));
 				int open = file.showOpenDialog(this);
 				if (open == JFileChooser.APPROVE_OPTION) {
-					img = file.getSelectedFile();
-					in = ImageIO.read(img);
-					newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+					tempString = file.getName();
 				}
 			} catch (Exception es) {
 				es.printStackTrace();
@@ -243,12 +254,13 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			newShow.setName(name.getText());
 			newShow.setDescription(description.getText());
 			newShow.setSeasons(c.getSelectedIndex() + 1);
-			newShow.setImage(newImage);
+			newShow.setImage(tempString);
 			c.addActionListener(this);
 			c.setActionCommand("combo");
 			showList.add(newShow);
 			showCount = new Show[showList.size()];
 			showCount = showList.toArray();
+			list.setListData(showCount);
 		}
 
 		listScroller.repaint();
@@ -257,18 +269,65 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	}
 
-	public void paintComponent(Graphics g) {
-		super.paintComponents(g);
-		for (int i = 0; i < showList.size(); i++) {
-			
-		}
-
-	}
 	
 	public void saveFile() {
-		
+		String sb = "TEST CONTENT";
+		chooser = new JFileChooser();
+		chooser.setCurrentDirectory(new File("Saved Shows"));
+		int retrival = chooser.showSaveDialog(this);
+		if (retrival == JFileChooser.APPROVE_OPTION) {
+			try {
+				outStream = new FileOutputStream(chooser.getSelectedFile());
+				outFile = new ObjectOutputStream(outStream);
+				for (int i = showList.size() - 1; i >= 0; i--) {
+					outFile.writeObject(showList.get(i));
+				}
+			} catch (Exception eq) {
+				System.out.println("Exception: " + eq.getMessage());
+				eq.printStackTrace();
+			}
+		}
+	}
+	
+	public void openFile() {
+		Show object;
+		chooser = new JFileChooser();
+		chooser.setCurrentDirectory(new File("Saved Shows"));
+		int open = chooser.showOpenDialog(this);
+		if (open == JFileChooser.APPROVE_OPTION) {
+			showList.clear();
+			repaint();
+			try {
+				inStream = new FileInputStream(chooser.getSelectedFile());
+				inFile = new ObjectInputStream(inStream);
+				while (inStream.available() > 0) {
+					object = (Show) inFile.readObject();
+					showList.add(object);
+				}
+				showCount = new Show[showList.size()];
+				showCount = showList.toArray();
+				list.setListData(showCount);
+			} catch (Exception es) {
+				System.out.println("Cannot Retrieve File: " + es.getMessage());
+			}
+		}
 	}
 
+	public void removeShow() {
+		showList.remove(list.getSelectedIndex());
+		showCount = new Show[showList.size()];
+		showCount = showList.toArray();
+		list.setListData(showCount);
+	}
+	
+	public void getInfo() {
+		Show tempShow = showList.get(list.getSelectedIndex());
+		icon = tempShow.getImage();
+		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(), "Number of Seasons:", tempShow.getSeasons()};
+		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.OK_CANCEL_OPTION, icon);
+	}
+	
 	/**
 	 * @param args
 	 */

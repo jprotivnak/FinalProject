@@ -1,11 +1,16 @@
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Show implements TVShows {
+public class Show implements TVShows, Serializable {
 	public String name; public String description;
-	public BufferedImage image;
+	public String image;
 	public int seasons;
 
 	public Show() {
+	}
+	
+	public String toString() {
+		return name + " - " + description + " - " + seasons;
 	}
 
 	public void setName(String s) {
@@ -16,11 +21,11 @@ public class Show implements TVShows {
 		return name;
 	}
 
-	public void setImage(BufferedImage i) {
+	public void setImage(String i) {
 		image = i;
 	}
 	
-	public BufferedImage getImage() {
+	public String getImage() {
 		return image;
 	}
 	

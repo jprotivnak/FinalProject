@@ -20,13 +20,13 @@ public  interface TVShows {
 	 * image for each TV Show.
 	 * @param image
 	 */
-	public void setImage(BufferedImage image);
+	public void setImage(String image);
 	
 	/**
 	 * Returns image set by user of show.
 	 * @return
 	 */
-	public BufferedImage getImage();
+	public String getImage();
 	
 	/**
 	 * Accepts type integer for number of seasons
