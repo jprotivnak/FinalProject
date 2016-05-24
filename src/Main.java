@@ -322,10 +322,11 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	
 	public void getInfo() {
 		Show tempShow = showList.get(list.getSelectedIndex());
-		icon = tempShow.getImage();
+		File fiile = new File(tempShow.getImage());
+		
+		icon = new Image(fiile);
 		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(), "Number of Seasons:", tempShow.getSeasons()};
-		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.OK_CANCEL_OPTION, icon);
+		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION, JOptionPane.OK_CANCEL_OPTION, icon);
 	}
 	
 	/**
