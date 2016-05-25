@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -37,6 +38,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private int[] seasonNumber = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 	private Font f1 = new Font("Dialog", Font.BOLD, 14);
 	private File img = new File("imagen.png");
+	private File fiile;
 	private Graphics2D g;
 	private BufferedImage in;
 	private BufferedImage newImage;
@@ -222,7 +224,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				file.setCurrentDirectory(new File("Saved Show Pictures"));
 				int open = file.showOpenDialog(this);
 				if (open == JFileChooser.APPROVE_OPTION) {
-					tempString = file.getName();
+					tempString = file.getSelectedFile().toString();
 				}
 			} catch (Exception es) {
 				es.printStackTrace();
@@ -233,6 +235,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	}
 
 	public void addShow() {
+		icon = new ImageIcon("tv.png");
 		Show newShow = new Show();
 		JTextField name = new JTextField();
 		JTextField description = new JTextField();
@@ -248,7 +251,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:",
 				button };
-		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+		int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.OK_CANCEL_OPTION, icon);
 		if (option == JOptionPane.OK_OPTION) {
 			newShow.setName(name.getText());
@@ -269,7 +272,6 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	}
 
-	
 	public void saveFile() {
 		String sb = "TEST CONTENT";
 		chooser = new JFileChooser();
@@ -288,7 +290,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			}
 		}
 	}
-	
+
 	public void openFile() {
 		Show object;
 		chooser = new JFileChooser();
@@ -319,16 +321,25 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		showCount = showList.toArray();
 		list.setListData(showCount);
 	}
-	
+
 	public void getInfo() {
 		Show tempShow = showList.get(list.getSelectedIndex());
-		File fiile = new File(tempShow.getImage());
-		
-		icon = new Image(fiile);
-		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(), "Number of Seasons:", tempShow.getSeasons()};
-		int option = JOptionPane.showConfirmDialog(null, message, "New Show", JOptionPane.OK_CANCEL_OPTION, JOptionPane.OK_CANCEL_OPTION, icon);
+		if (tempShow.getImage() != null) {
+			img = new File(tempShow.getImage());
+			try {
+				System.out.println(img.toString());
+				newImage = ImageIO.read(img);
+				icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
+			} catch (IOException esq) {
+				JOptionPane.showMessageDialog(this, "No Image Avalable!");;
+			}
+		}
+		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(),
+				"Number of Seasons:", tempShow.getSeasons() };
+		int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.OK_CANCEL_OPTION, icon);
 	}
-	
+
 	/**
 	 * @param args
 	 */
