@@ -50,13 +50,41 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private FileInputStream inStream;
 	private ObjectInputStream inFile;
 	private String tempString;
+	private boolean save;
 
 	public Main() {
 		super();
 		this.setLayout(new GridLayout(2, 2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		 addWindowListener(new WindowAdapter()
+	        {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	            	while(!save) {
+	        			int option = JOptionPane.showConfirmDialog(null, "You have unsaved work!\nWould you like to save you work?",tempString, JOptionPane.YES_NO_OPTION);
+	        			if(option == JOptionPane.YES_OPTION) {
+	        				save = true;
+	        				saveFile();
+	        				System.exit(-1);
+	        			} else {
+	        				System.exit(-1);
+	        			}
+	            	}
+	            }
+	        });
+
 		icon = new ImageIcon("tv.png");
 		showCount = new Show[2];
+		save = true;
+		
+		String[] columnNames = {"First Name", "Last Name", "Sport", "# of Years", "Vegetarian"};
+		
+//		http://docs.oracle.com/javase/tutorial/uiswing/components/table.html
+		
+		
+		
+		
+		
 
 		menuBar = new JMenuBar();
 
@@ -192,15 +220,26 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "edit":
 			break;
 		case "about":
-			JOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(this,
 					"TVTUNER\u2122\nCopyright \u00A92016 Pro Inc. All Rights Reserved \u00AE. License Agreement");
 			break;
 		case "license":
-			JOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(this,
 					"Copyright (\u00A9) 2016, 1998 Pro Inc.\n800 Montana Ave., Natrona Heights, PA  15065, USA\nEveryone is permitted to copy and distribute verbatim copies\nof this license document, but changing it is not allowed.");
 			break;
 		case "quit":
-			System.exit(-1);
+			while (!save) {
+				int option = JOptionPane.showConfirmDialog(this,
+						"You have unsaved work!\nWould you like to save you work?", tempString,
+						JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					save = true;
+					saveFile();
+					System.exit(-1);
+    			} else {
+    				System.exit(-1);
+    			}
+			}
 			break;
 		case "new":
 			break;
@@ -265,6 +304,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			showCount = showList.toArray();
 			list.setListData(showCount);
 		}
+		save = false;
 
 		listScroller.repaint();
 
@@ -284,6 +324,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				for (int i = showList.size() - 1; i >= 0; i--) {
 					outFile.writeObject(showList.get(i));
 				}
+				save = true;
 			} catch (Exception eq) {
 				System.out.println("Exception: " + eq.getMessage());
 				eq.printStackTrace();
@@ -309,6 +350,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				showCount = new Show[showList.size()];
 				showCount = showList.toArray();
 				list.setListData(showCount);
+				save = true;
 			} catch (Exception es) {
 				System.out.println("Cannot Retrieve File: " + es.getMessage());
 			}
@@ -331,7 +373,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				newImage = ImageIO.read(img);
 				icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
 			} catch (IOException esq) {
-				JOptionPane.showMessageDialog(this, "No Image Avalable!");;
+				JOptionPane.showMessageDialog(this, "No Image Avalable!");
+				;
 			}
 		}
 		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(),
