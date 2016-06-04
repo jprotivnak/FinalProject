@@ -1,6 +1,3 @@
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
 public  interface TVShows {
 	
 	/**
@@ -9,22 +6,23 @@ public  interface TVShows {
 	 * @param s
 	 */
 	public void setName(String s);
+	
 	 /**
 	  * Returns name of show.
-	  * @return
+	  * @return name
 	  */
 	public String getName();
 
 	/**
-	 * Accepts type BufferedImage to set as the
-	 * image for each TV Show.
+	 * Accepts type String to set as the
+	 * image location for each TV Show.
 	 * @param image
 	 */
 	public void setImage(String image);
 	
 	/**
-	 * Returns image set by user of show.
-	 * @return
+	 * Returns image location set by user of show.
+	 * @return image
 	 */
 	public String getImage();
 	
@@ -34,9 +32,10 @@ public  interface TVShows {
 	 * @param numSeasons
 	 */
 	public void setSeasons(int numSeasons);
+	
 	 /**
 	  * Returns number of seasons.
-	  * @return
+	  * @return seasons
 	  */
 	public int getSeasons();
 	
@@ -49,17 +48,7 @@ public  interface TVShows {
 	
 	/**
 	 * Returns description of show.
-	 * @return
+	 * @return description
 	 */
 	public String getDescription();
-	
-//	public void 
-	
-	
-	
-	
-	
-	
-	
-	
 }

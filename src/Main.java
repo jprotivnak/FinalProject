@@ -3,47 +3,36 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
+import java.io.*;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.*;
 
 /**
  * @author Jack Protivnak
- *
+ * This program is designed to enable a user to enter
+ * different TV Shows they watch and keep track of how many
+ * seasons there are. The user can enter the name, a description,
+ * an image, and how many seasons there are for the show. They can
+ * edit the show, create a new show, get info about the show,
+ * and remove the show from the list.
  */
 public class Main extends JFrame implements ActionListener, Serializable {
 	public static final long serialVersionUID = 1;
 	private JMenu TVTuner;
 	private JMenu file;
 	private JMenu view;
-	private JMenu subMenu;
 	private JMenuBar menuBar;
 	private JMenuItem menuItem;
-	private JTextField shows;
 	private JPanel options;
 	private JButton button;
-	private JList list;
 	private JScrollPane listScroller;
 	private ArrayList<Show> showList = new ArrayList<Show>();
-	private Show[] tempArray;
-	private Object[] showCount;
-	private int[] seasonNumber = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 	private Font f1 = new Font("Dialog", Font.BOLD, 14);
 	private File img = new File("imagen.png");
-	private File fiile;
-	private Graphics2D g;
-	private BufferedImage in;
 	private BufferedImage newImage;
 	private Icon icon;
-	private JComboBox c;
+	private JComboBox<Integer> c = new JComboBox<Integer>();
 	private JFileChooser chooser;
 	private FileOutputStream outStream;
 	private ObjectOutputStream outFile;
@@ -51,49 +40,48 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	private ObjectInputStream inFile;
 	private String tempString;
 	private boolean save;
+	private JTable table;
+	private DefaultTableModel tModel;
 
+	/**
+	 * Constructor contains general layout of the GUI and sets the framework for
+	 * the program.
+	 */
 	public Main() {
 		super();
 		this.setLayout(new GridLayout(2, 2));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 addWindowListener(new WindowAdapter()
-	        {
-	            @Override
-	            public void windowClosing(WindowEvent e) {
-	            	while(!save) {
-	        			int option = JOptionPane.showConfirmDialog(null, "You have unsaved work!\nWould you like to save you work?",tempString, JOptionPane.YES_NO_OPTION);
-	        			if(option == JOptionPane.YES_OPTION) {
-	        				save = true;
-	        				saveFile();
-	        				System.exit(-1);
-	        			} else {
-	        				System.exit(-1);
-	        			}
-	            	}
-	            }
-	        });
-
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				while (!save) {
+					int option = JOptionPane.showConfirmDialog(null,
+							"You have unsaved work!\nWould you like to save you work?", tempString,
+							JOptionPane.YES_NO_OPTION);
+					if (option == JOptionPane.YES_OPTION) {
+						save = true;
+						saveFile();
+						System.exit(-1);
+					} else {
+						System.exit(-1);
+					}
+				}
+			}
+		});
+		
+		for (int i = 0; i < 20; i++)
+			c.addItem(i+1);
+		
 		icon = new ImageIcon("tv.png");
-		showCount = new Show[2];
 		save = true;
-		
-		String[] columnNames = {"First Name", "Last Name", "Sport", "# of Years", "Vegetarian"};
-		
-//		http://docs.oracle.com/javase/tutorial/uiswing/components/table.html
-		
-		
-		
-		
-		
 
 		menuBar = new JMenuBar();
 
-		list = new JList(showCount);
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL);
-		list.setVisibleRowCount(-1);
-
-		listScroller = new JScrollPane(list);
+		tModel = new DefaultTableModel();
+		String[] columnNames = { "Show Name", "Description", "Seasons" };
+		tModel.setColumnIdentifiers(columnNames);
+		table = new JTable(tModel);
+		listScroller = new JScrollPane(table);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 
 		this.add(listScroller, BorderLayout.NORTH);
@@ -132,8 +120,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		menuBar.add(TVTuner);
 
 		file = new JMenu("File");
-		menuItem = new JMenuItem("New");
-		menuItem.setActionCommand("new");
+		menuItem = new JMenuItem("Clear");
+		menuItem.setActionCommand("clear");
 		menuItem.addActionListener(this);
 
 		file.add(menuItem);
@@ -195,8 +183,6 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 		options.add(button);
 
-		// subMenu = new JMenu("");
-
 		this.setJMenuBar(menuBar);
 		this.add(options);
 
@@ -206,6 +192,9 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		this.setVisible(true);
 	}
 
+	/**
+	 * ActionListener for the program will take direct the flow of traffic for each action that is performed.
+	 */
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "add":
@@ -218,6 +207,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			getInfo();
 			break;
 		case "edit":
+			editShow();
 			break;
 		case "about":
 			JOptionPane.showMessageDialog(this,
@@ -236,12 +226,16 @@ public class Main extends JFrame implements ActionListener, Serializable {
 					save = true;
 					saveFile();
 					System.exit(-1);
-    			} else {
-    				System.exit(-1);
-    			}
+				} else {
+					System.exit(-1);
+				}
 			}
 			break;
-		case "new":
+		case "clear":
+			save = false;
+			tModel.setRowCount(0);
+			table.repaint();
+			listScroller.repaint();
 			break;
 		case "open":
 			openFile();
@@ -270,9 +264,12 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			}
 			break;
 		}
-
 	}
 
+	/**
+	 * When adding a show, the user will have their choice of giving a 
+	 * name, description, total number of seasons, and an image.
+	 */
 	public void addShow() {
 		icon = new ImageIcon("tv.png");
 		Show newShow = new Show();
@@ -282,12 +279,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		button.setActionCommand("picButton");
 		button.addActionListener(this);
 		button.setSize(50, 10);
-		c = new JComboBox();
-
-		for (int i = 0; i < seasonNumber.length; i++) {
-			c.addItem(seasonNumber[i]);
-		}
-
+		c.setSelectedIndex(0);
 		Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:",
 				button };
 		int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
@@ -300,20 +292,20 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			c.addActionListener(this);
 			c.setActionCommand("combo");
 			showList.add(newShow);
-			showCount = new Show[showList.size()];
-			showCount = showList.toArray();
-			list.setListData(showCount);
+			String[] tempArray = new String[3];
+			tempArray[0] = newShow.getName();
+			tempArray[1] = newShow.getDescription();
+			tempArray[2] = Integer.toString(newShow.getSeasons());
+			tModel.addRow(tempArray);
+			save = false;
 		}
-		save = false;
-
 		listScroller.repaint();
-
-		// http://www.java2s.com/Code/Java/Swing-JFC/Usingdropdownlists.htm
-
 	}
 
+	/**
+	 * Called when saving a file and will write the show list to disk.
+	 */
 	public void saveFile() {
-		String sb = "TEST CONTENT";
 		chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("Saved Shows"));
 		int retrival = chooser.showSaveDialog(this);
@@ -328,10 +320,22 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			} catch (Exception eq) {
 				System.out.println("Exception: " + eq.getMessage());
 				eq.printStackTrace();
+			} finally {
+				try {
+					outFile.close();
+					outStream.close();
+				} catch (IOException eas) {
+					eas.printStackTrace();
+				}
 			}
 		}
 	}
 
+	/**
+	 * Called to open a file and read the information into the showList
+	 * ArrayList for all of the shows. The DefaultTableModel that holds all of the shows
+	 * is updated so the can be displayed correctly.
+	 */
 	public void openFile() {
 		Show object;
 		chooser = new JFileChooser();
@@ -347,48 +351,134 @@ public class Main extends JFrame implements ActionListener, Serializable {
 					object = (Show) inFile.readObject();
 					showList.add(object);
 				}
-				showCount = new Show[showList.size()];
-				showCount = showList.toArray();
-				list.setListData(showCount);
+				tModel.setRowCount(0);
+				for (int i = 0; i < showList.size(); i++) {
+					String[] tempArray = new String[3];
+					tempArray[0] = showList.get(i).getName();
+					tempArray[1] = showList.get(i).getDescription();
+					tempArray[2] = Integer.toString(showList.get(i).getSeasons());
+					tModel.addRow(tempArray);
+				}
+				table.repaint();
+				listScroller.repaint();
 				save = true;
 			} catch (Exception es) {
 				System.out.println("Cannot Retrieve File: " + es.getMessage());
+			} finally {
+				try {
+					inStream.close();
+					inFile.close();
+				} catch (Exception wer) {
+					wer.printStackTrace();
+				}
 			}
 		}
-	}
-
-	public void removeShow() {
-		showList.remove(list.getSelectedIndex());
-		showCount = new Show[showList.size()];
-		showCount = showList.toArray();
-		list.setListData(showCount);
-	}
-
-	public void getInfo() {
-		Show tempShow = showList.get(list.getSelectedIndex());
-		if (tempShow.getImage() != null) {
-			img = new File(tempShow.getImage());
-			try {
-				System.out.println(img.toString());
-				newImage = ImageIO.read(img);
-				icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
-			} catch (IOException esq) {
-				JOptionPane.showMessageDialog(this, "No Image Avalable!");
-				;
-			}
-		}
-		Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(),
-				"Number of Seasons:", tempShow.getSeasons() };
-		int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.OK_CANCEL_OPTION, icon);
 	}
 
 	/**
+	 * Called to remove a show from the list that is displayed.
+	 */
+	public void removeShow() {
+		if (table.getSelectedRow() != -1) {
+			showList.remove(table.getSelectedRow());
+			tModel.setRowCount(0);
+			for (int i = 0; i < showList.size(); i++) {
+				String[] tempArray = new String[3];
+				tempArray[0] = showList.get(i).getName();
+				tempArray[1] = showList.get(i).getDescription();
+				tempArray[2] = Integer.toString(showList.get(i).getSeasons());
+				tModel.addRow(tempArray);
+			}
+			save = false;
+			table.repaint();
+			listScroller.repaint();
+		}
+	}
+
+	/**
+	 * Called to get information about a show based on the user's
+	 * choice from the list.
+	 */
+	public void getInfo() {
+		if (table.getSelectedRow() != -1) {
+			Show tempShow = showList.get(table.getSelectedRow());
+			if (tempShow.getImage() != null) {
+				img = new File(tempShow.getImage());
+				try {
+					newImage = ImageIO.read(img);
+					icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
+				} catch (IOException esq) {
+					JOptionPane.showMessageDialog(this, "No Image Avalable!");
+					;
+				}
+			}
+			Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(),
+					"Number of Seasons:", tempShow.getSeasons() };
+			JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.OK_CANCEL_OPTION, icon);
+		}
+
+	}
+	
+	/**
+	 * Called to edit a show based on the selection on the JTable by the user.
+	 */
+	public void editShow() {
+		if (table.getSelectedRow() != -1) {
+			Show tempShow = showList.get(table.getSelectedRow());
+			if (tempShow.getImage() != null) {
+				img = new File(tempShow.getImage());
+				try {
+					newImage = ImageIO.read(img);
+					icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
+				} catch (IOException esq) {
+					JOptionPane.showMessageDialog(this, "No Image Avalable!");
+					icon = new ImageIcon("tv.png");					
+				}
+			}
+			Show newShow = new Show();
+			JTextField name = new JTextField();
+			name.setText(tempShow.getName());
+			JTextField description = new JTextField();
+			description.setText(tempShow.getDescription());
+			JButton button = new JButton("Set Image");
+			button.setActionCommand("picButton");
+			button.addActionListener(this);
+			button.setSize(50, 10);
+			c.setSelectedItem(tempShow.getSeasons());
+			Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:",
+					button };
+			int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.OK_CANCEL_OPTION, icon);
+			if (option == JOptionPane.OK_OPTION) {
+				newShow.setName(name.getText());
+				newShow.setDescription(description.getText());
+				newShow.setSeasons(c.getSelectedIndex() + 1);
+				newShow.setImage(tempString);
+				c.addActionListener(this);
+				c.setActionCommand("combo");
+				showList.set(table.getSelectedRow(), newShow);
+				tModel.setRowCount(0);
+				for (int i = 0; i < showList.size(); i++) {
+					String[] tempArray = new String[3];
+					tempArray[0] = showList.get(i).getName();
+					tempArray[1] = showList.get(i).getDescription();
+					tempArray[2] = Integer.toString(showList.get(i).getSeasons());
+					tModel.addRow(tempArray);
+				}
+			}
+			save = false;
+			table.repaint();
+			listScroller.repaint();
+		}
+	}
+
+	/**
+	 * Program main.
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		new Main();
 	}
-
 }
