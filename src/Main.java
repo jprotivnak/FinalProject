@@ -415,8 +415,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			}
 			Object[] message = { "Name:", tempShow.getName(), "Description:", tempShow.getDescription(),
 					"Number of Seasons:", tempShow.getSeasons() };
-			JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.OK_CANCEL_OPTION, icon);
+			JOptionPane.showMessageDialog(this, message, "New Show",JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 
 	}
@@ -449,7 +448,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 			c.setSelectedItem(tempShow.getSeasons());
 			Object[] message = { "Name:", name, "Description:", description, "Number of Seasons:", c, "Show Image:",
 					button };
-			int option = JOptionPane.showConfirmDialog(this, message, "New Show", JOptionPane.OK_CANCEL_OPTION,
+			int option = JOptionPane.showConfirmDialog(this, message, tempShow.getName(), JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.OK_CANCEL_OPTION, icon);
 			if (option == JOptionPane.OK_OPTION) {
 				newShow.setName(name.getText());
