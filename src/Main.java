@@ -9,13 +9,12 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.table.*;
 
 /**
- * @author Jack Protivnak
- * This program is designed to enable a user to enter
- * different TV Shows they watch and keep track of how many
- * seasons there are. The user can enter the name, a description,
- * an image, and how many seasons there are for the show. They can
- * edit the show, create a new show, get info about the show,
- * and remove the show from the list.
+ * @author Jack Protivnak This program is designed to enable a user to enter
+ *         different TV Shows they watch and keep track of how many seasons
+ *         there are. The user can enter the name, a description, an image, and
+ *         how many seasons there are for the show. They can edit the show,
+ *         create a new show, get info about the show, and remove the show from
+ *         the list.
  */
 public class Main extends JFrame implements ActionListener, Serializable {
 	public static final long serialVersionUID = 1;
@@ -68,10 +67,10 @@ public class Main extends JFrame implements ActionListener, Serializable {
 				}
 			}
 		});
-		
+
 		for (int i = 0; i < 20; i++)
-			c.addItem(i+1);
-		
+			c.addItem(i + 1);
+
 		icon = new ImageIcon("tv.png");
 		save = true;
 
@@ -154,7 +153,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		menuItem.addActionListener(this);
 
 		view.add(menuItem);
-
+		
 		view.setFont(f1);
 
 		menuBar.add(view);
@@ -193,7 +192,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	}
 
 	/**
-	 * ActionListener for the program will take direct the flow of traffic for each action that is performed.
+	 * ActionListener for the program will take direct the flow of traffic for
+	 * each action that is performed.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
@@ -234,6 +234,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		case "clear":
 			save = false;
 			tModel.setRowCount(0);
+			showList = new ArrayList<Show>();
 			table.repaint();
 			listScroller.repaint();
 			break;
@@ -267,8 +268,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	}
 
 	/**
-	 * When adding a show, the user will have their choice of giving a 
-	 * name, description, total number of seasons, and an image.
+	 * When adding a show, the user will have their choice of giving a name,
+	 * description, total number of seasons, and an image.
 	 */
 	public void addShow() {
 		icon = new ImageIcon("tv.png");
@@ -333,8 +334,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	/**
 	 * Called to open a file and read the information into the showList
-	 * ArrayList for all of the shows. The DefaultTableModel that holds all of the shows
-	 * is updated so the can be displayed correctly.
+	 * ArrayList for all of the shows. The DefaultTableModel that holds all of
+	 * the shows is updated so the can be displayed correctly.
 	 */
 	public void openFile() {
 		Show object;
@@ -352,7 +353,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 					showList.add(object);
 				}
 				tModel.setRowCount(0);
-				for (int i = 0; i < showList.size(); i++) {
+				for (int i = showList.size() - 1; i >= 0; i--) {
 					String[] tempArray = new String[3];
 					tempArray[0] = showList.get(i).getName();
 					tempArray[1] = showList.get(i).getDescription();
@@ -396,8 +397,8 @@ public class Main extends JFrame implements ActionListener, Serializable {
 	}
 
 	/**
-	 * Called to get information about a show based on the user's
-	 * choice from the list.
+	 * Called to get information about a show based on the user's choice from
+	 * the list.
 	 */
 	public void getInfo() {
 		if (table.getSelectedRow() != -1) {
@@ -419,7 +420,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * Called to edit a show based on the selection on the JTable by the user.
 	 */
@@ -433,7 +434,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 					icon = new ImageIcon(newImage.getScaledInstance(250, 175, Image.SCALE_SMOOTH));
 				} catch (IOException esq) {
 					JOptionPane.showMessageDialog(this, "No Image Avalable!");
-					icon = new ImageIcon("tv.png");					
+					icon = new ImageIcon("tv.png");
 				}
 			}
 			Show newShow = new Show();
@@ -475,6 +476,7 @@ public class Main extends JFrame implements ActionListener, Serializable {
 
 	/**
 	 * Program main.
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
